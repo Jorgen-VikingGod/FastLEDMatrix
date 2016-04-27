@@ -1,4 +1,4 @@
-// Source code is based on https://github.com/adafruit/FastLEDMatrix
+// Source code is based on https://github.com/adafruit/Adafruit_NeoMatrix
 // replace internal use of NeoPixel library with CRGB array to use with FastLED
 //
 // modified:  Juergen Skrotzky (JorgenVikingGod@gmail.com)
