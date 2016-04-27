@@ -1,6 +1,6 @@
 // Source code is based on https://github.com/adafruit/FastLEDMatrix
 // replace internal use of NeoPixel library with CRGB array to use with FastLED
-//  
+//
 // modified:  Juergen Skrotzky (JorgenVikingGod@gmail.com)
 // date:      2016/04/27
 // --------------------------------------------------------------------
@@ -11,9 +11,8 @@
 // NeoPixel 60 LEDs per meter flex strip.
 
 #include <FastLED.h>
-#include <Adafruit_GFX.h>
+#include <FastLED_GFX.h>
 #include <FastLEDMatrix.h>
-
 
 #define LED_PIN             2
 #define COLOR_ORDER         GRB
@@ -60,24 +59,17 @@
 // or column order.  The matrices use 800 KHz (v2) pixels that expect GRB
 // color data.
 
-#define MATRIX_WIDTH        10 // width of EACH NEOPIXEL MATRIX (not total display)
-#define MATRIX_HEIGHT       8 // height of each matrix
-#define MATRIX_TILE_H       3 // number of matrices arranged horizontally
-#define MATRIX_TILE_V       1 // number of matrices arranged vertically
-#define MATRIX_TYPE        (MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS + MTX_TILE_PROGRESSIVE +
-                            MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG) // matrix layout flags, add together as needed
+#define MATRIX_WIDTH        16 // width of EACH NEOPIXEL MATRIX (not total display)
+#define MATRIX_HEIGHT       16 // height of each matrix
+#define MATRIX_TILE_H       4  // number of matrices arranged horizontally
+#define MATRIX_TILE_V       1  // number of matrices arranged vertically
+#define MATRIX_TYPE        (MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG + MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS) // matrix layout flags, add together as needed
+#define MATRIX_SIZE        (MATRIX_WIDTH*MATRIX_HEIGHT)
 
 FastLEDMatrix matrix = FastLEDMatrix(MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TILE_H, MATRIX_TILE_V, MATRIX_TYPE);
 
-
 uint16_t PlasmaTime, PlasmaShift;
 uint32_t LoopDelayMS, LastLoop;
-
-const uint16_t colors[] = {
-  matrix.Color(CRGB(255, 0, 0)), 
-  matrix.Color(CRGB(0, 255, 0)), 
-  matrix.Color(CRGB(0, 0, 255))
-};
 
 void ESP8266_yield() {
 #ifdef ESP8266
@@ -90,7 +82,7 @@ void setup() {
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(matrix[0], matrix.Size());
   FastLED.setBrightness(128);
   FastLED.clear(true);
-  
+
   LoopDelayMS = TARGET_FRAME_TIME;
   LastLoop = millis() - LoopDelayMS;
   PlasmaShift = (random8(0, 5) * 32) + 64;
@@ -116,7 +108,7 @@ void loop() {
     PlasmaTime += PlasmaShift;
     if (OldPlasmaTime > PlasmaTime)
       PlasmaShift = (random8(0, 5) * 32) + 64;
-	
+
 	FastLED.show();
   }
 }
