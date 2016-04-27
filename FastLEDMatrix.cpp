@@ -36,7 +36,6 @@
   License along with NeoMatrix.  If not, see
   <http://www.gnu.org/licenses/>.
   -------------------------------------------------------------------------*/
-
 #include <FastLED.h>
 #include <FastLEDMatrix.h>
 
@@ -56,17 +55,17 @@
 
 // Constructor for single matrix:
 FastLEDMatrix::FastLEDMatrix(int w, int h, uint8_t matrixType)
-  : Adafruit_GFX(w, h), type(matrixType), matrixWidth(w), matrixHeight(h),
+  : FastLED_GFX(w, h), type(matrixType), matrixWidth(w), matrixHeight(h),
     tilesX(0), tilesY(0), remapFn(NULL) {
-  struct CRGB p_LED[(matrixWidth * matrixHeight];
+  struct CRGB p_LED[(matrixWidth * matrixHeight)];
   m_LED = p_LED;
 }
 
 // Constructor for tiled matrices:
 FastLEDMatrix::FastLEDMatrix(uint8_t mW, uint8_t mH, uint8_t tX, uint8_t tY, uint8_t matrixType)
-  : Adafruit_GFX(mW * tX, mH * tY), type(matrixType), matrixWidth(mW), matrixHeight(mH),
+  : FastLED_GFX(mW * tX, mH * tY), type(matrixType), matrixWidth(mW), matrixHeight(mH),
     tilesX(tX), tilesY(tY), remapFn(NULL) {
-  struct CRGB p_LED[(matrixWidth*tilesX * matrixHeight*tilesY];
+  struct CRGB p_LED[(matrixWidth*tilesX * matrixHeight*tilesY)];
   m_LED = p_LED;
 }
 
@@ -92,7 +91,7 @@ void FastLEDMatrix::SetLEDArray(struct CRGB *pLED) {
   m_LED = pLED;
 }
 
-virtual uint16_t FastLEDMatrix::mXY(uint16_t x, uint16_t y) {
+uint16_t FastLEDMatrix::mXY(uint16_t x, uint16_t y) {
   if((x < 0) || (y < 0) || (x >= _width) || (y >= _height)) return 0;
 
   int16_t t;
@@ -189,22 +188,15 @@ virtual uint16_t FastLEDMatrix::mXY(uint16_t x, uint16_t y) {
   return (tileOffset + pixelOffset);
 }
 
-// Downgrade 24-bit color to 16-bit (add reverse gamma lookup here?)
-uint16_t FastLEDMatrix::Color(CRGB color) {
-  return ((uint16_t)(color.r & 0xF8) << 8) |
-         ((uint16_t)(color.g & 0xFC) << 3) |
-                    (color.b         >> 3);
-}
-
 void FastLEDMatrix::drawPixel(int16_t x, int16_t y, CRGB color) {
   m_LED[mXY(x,y)] = color;
 }
 
-void FastLEDMatrix::fillScreen(uint16_t color) {
+void FastLEDMatrix::fillScreen(CRGB color) {
   uint16_t i, n;
   uint32_t c;
 
-  n = numPixels();
+  n = Size();
   for(i=0; i<n; i++) m_LED[i] = c;
 }
 

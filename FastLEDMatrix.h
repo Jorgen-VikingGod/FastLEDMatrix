@@ -27,7 +27,13 @@
 #ifndef _FASTLEDMATRIX_H_
 #define _FASTLEDMATRIX_H_
 
-#include <Adafruit_GFX.h>
+#if ARDUINO >= 100
+ #include <Arduino.h>
+#else
+ #include <WProgram.h>
+ #include <pins_arduino.h>
+#endif
+#include <FastLED_GFX.h>
 
 // Matrix layout information is passed in the 'matrixType' parameter for
 // each constructor.
@@ -35,7 +41,6 @@
 // These define the layout for a single 'unified' matrix (e.g. one made
 // from NeoPixel strips, or a single NeoPixel shield), or for the pixels
 // within each matrix of a tiled display (e.g. multiple NeoPixel shields).
-
 #define MTX_MATRIX_TOP         0x00 // Pixel 0 is at top of matrix
 #define MTX_MATRIX_BOTTOM      0x01 // Pixel 0 is at bottom of matrix
 #define MTX_MATRIX_LEFT        0x00 // Pixel 0 is at left of matrix
@@ -49,7 +54,6 @@
 #define MTX_MATRIX_SEQUENCE    0x08 // Bitmask for pixel line order
 
 // These apply only to tiled displays (multiple matrices):
-
 #define MTX_TILE_TOP           0x00 // First tile is at top of matrix
 #define MTX_TILE_BOTTOM        0x10 // First tile is at bottom of matrix
 #define MTX_TILE_LEFT          0x00 // First tile is at left of matrix
@@ -62,21 +66,17 @@
 #define MTX_TILE_ZIGZAG        0x80 // Tile order reverses between lines
 #define MTX_TILE_SEQUENCE      0x80 // Bitmask for tile line order
 
-class FastLEDMatrix : public Adafruit_GFX {
+class FastLEDMatrix : public FastLED_GFX {
 
 public:
 
   // Constructor for single matrix:
-  FastLEDMatrix(int w, int h,
-                uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT +
-                                     MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG);
+  FastLEDMatrix(int w, int h, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG);
 
   // Constructor for tiled matrices:
-  FastLEDMatrix(uint8_t matrixW, uint8_t matrixH, uint8_t tX, uint8_t tY,
-                uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG +
-                                     MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS + MTX_TILE_ZIGZAG);
+  FastLEDMatrix(uint8_t matrixW, uint8_t matrixH, uint8_t tX, uint8_t tY, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG + MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS + MTX_TILE_ZIGZAG);
 
-  virtual uint16_t mXY(uint16_t x, uint16_t y)=0;
+  virtual uint16_t mXY(uint16_t x, uint16_t y);
   void SetLEDArray(struct CRGB *pLED);	// Only used with externally defined LED arrays
 
   struct CRGB *operator[](int n);
@@ -93,9 +93,7 @@ public:
   void setPassThruColor(void);
   void setRemapFunction(uint16_t (*fn)(uint16_t, uint16_t));
 
-  static uint16_t Color(CRGB color);
-
-protected:
+private:
   struct CRGB *m_LED;
   struct CRGB m_OutOfBounds;
 
@@ -105,9 +103,6 @@ protected:
   const uint8_t tilesX;
   const uint8_t tilesY;
   uint16_t (*remapFn)(uint16_t x, uint16_t y);
-
-  CRGB passThruColor;
-  boolean passThruFlag = false;
 };
 
 #endif // _FASTLEDMATRIX_H_

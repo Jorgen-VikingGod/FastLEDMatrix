@@ -10,9 +10,10 @@
 // 'Howdy' across three 10x8 NeoPixel grids that were created using
 // NeoPixel 60 LEDs per meter flex strip.
 
+#include <FastLED.h>
 #include <Adafruit_GFX.h>
 #include <FastLEDMatrix.h>
-#include <FastLED.h>
+
 
 #define LED_PIN             2
 #define COLOR_ORDER         GRB

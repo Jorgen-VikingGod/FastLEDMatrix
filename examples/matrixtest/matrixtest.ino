@@ -1,6 +1,6 @@
 // Source code is based on https://github.com/adafruit/FastLEDMatrix
 // replace internal use of NeoPixel library with CRGB array to use with FastLED
-//  
+//
 // modified:  Juergen Skrotzky (JorgenVikingGod@gmail.com)
 // date:      2016/04/27
 // --------------------------------------------------------------------
@@ -9,9 +9,9 @@
 // Adafruit_NeoMatrix example for single NeoPixel Shield.
 // Scrolls 'Howdy' across the matrix in a portrait (vertical) orientation.
 
-#include <Adafruit_GFX.h>
-#include <FastLEDMatrix.h>
 #include <FastLED.h>
+#include <FastLED_GFX.h>
+#include <FastLEDMatrix.h>
 
 #define LED_PIN        2
 #define COLOR_ORDER    GRB
@@ -38,15 +38,14 @@
 // Example for NeoPixel Shield.  In this application we'd like to use it
 // as a 5x8 tall matrix, with the USB port positioned at the top of the
 // Arduino.  When held that way, the first pixel is at the top right, and
-// lines are arranged in columns, progressive order.  
-
+// lines are arranged in columns, progressive order.
 
 FastLEDMatrix matrix = FastLEDMatrix(MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE);
 
-const uint16_t colors[] = {
-  matrix.Color(CRGB(255, 0, 0)), 
-  matrix.Color(CRGB(0, 255, 0)), 
-  matrix.Color(CRGB(0, 0, 255))
+const CRGB colors[] = {
+  CRGB(255, 0, 0),
+  CRGB(0, 255, 0),
+  CRGB(0, 0, 255)
 };
 
 void setup() {
@@ -54,7 +53,7 @@ void setup() {
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(matrix[0], matrix.Size());
   FastLED.setBrightness(127);
   FastLED.clear(true);
-  
+
   matrix.setTextWrap(false);
   matrix.setBrightness(40);
   matrix.setTextColor(colors[0]);
