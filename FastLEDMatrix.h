@@ -87,7 +87,10 @@ public:
   //int Width()  { return(_width); }
   //int Height() { return(_height); }
 
+  void drawPixel(int n, CRGB color);
   void drawPixel(int16_t x, int16_t y, CRGB color);
+  struct CRGB & pixel(int n);
+  struct CRGB & pixel(int16_t x, int16_t y);
   void fillScreen(CRGB color);
   void setPassThruColor(CRGB color);
   void setPassThruColor(void);

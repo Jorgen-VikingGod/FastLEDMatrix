@@ -188,8 +188,20 @@ uint16_t FastLEDMatrix::mXY(uint16_t x, uint16_t y) {
   return (tileOffset + pixelOffset);
 }
 
+void FastLEDMatrix::drawPixel(int n, CRGB color) {
+  m_LED[n] = color;
+}
+
 void FastLEDMatrix::drawPixel(int16_t x, int16_t y, CRGB color) {
   m_LED[mXY(x,y)] = color;
+}
+
+struct CRGB& FastLEDMatrix::pixel(int n) {
+  return m_LED[n];
+}
+
+struct CRGB& FastLEDMatrix::pixel(int16_t x, int16_t y) {
+  return m_LED[mXY(x,y)];
 }
 
 void FastLEDMatrix::fillScreen(CRGB color) {
