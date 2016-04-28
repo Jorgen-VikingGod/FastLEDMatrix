@@ -74,7 +74,7 @@ Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafrui
 FastLEDMatrix matrix = FastLEDMatrix(MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE);
 ```
 
-### Initial FastLED
+### Initialize FastLED
 ```c
 void setup() {
   // initial FastLED by using CRGB led source from our matrix class
@@ -122,7 +122,7 @@ void setup() {
 FastLEDMatrix matrix = FastLEDMatrix(MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TILE_H, MATRIX_TILE_V, MATRIX_TYPE);
 ```
 
-### Initial FastLED
+### Initialize FastLED
 ```c
 void setup() {
   // initial FastLED by using CRGB led source from our matrix class
@@ -132,7 +132,7 @@ void setup() {
 }
 ```
 
-### Initial FastLED (multiple controller)
+### Initialize FastLED (multiple controller)
 ```c
 void setup() {
   // initial FastLED with multiple controller, by using CRGB led source from each matrix panal
