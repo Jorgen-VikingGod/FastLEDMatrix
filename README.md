@@ -29,9 +29,11 @@ Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafrui
             <li><a href="#initialize-fastled-multiple-controller">Initialize FastLED (multiple controller)</a></li>
           </ul>
         </li>
+        <li><a href="#available-methods">Available Methods</a></li>
+        </li>        
         <li><a href="#graphic-library-fastled-gfx">Graphic Library</a>
           <ul>
-            <li><a href="#available-methods">Available Methods</a></li>
+            <li><a href="#available-methods-1">Available Methods</a></li>
           </ul>
         </li>        
       </ul>
@@ -71,7 +73,7 @@ Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafrui
 #define MATRIX_TYPE    (MTX_MATRIX_TOP + MTX_MATRIX_RIGHT + MTX_MATRIX_COLUMNS + MTX_MATRIX_PROGRESSIVE) // matrix layout flags, add together as needed
 
 // create our matrix based on matrix definition
-FastLEDMatrix matrix = FastLEDMatrix(MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE);
+cFastLEDSingleMatrix<MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE> matrix;
 ```
 
 ### Initialize FastLED
@@ -119,7 +121,7 @@ void setup() {
 #define MATRIX_SIZE        (MATRIX_WIDTH*MATRIX_HEIGHT)
 
 // create our matrix based on matrix definition
-FastLEDMatrix matrix = FastLEDMatrix(MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TILE_H, MATRIX_TILE_V, MATRIX_TYPE);
+cFastLEDMatrix<MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TILE_H, MATRIX_TILE_V, MATRIX_TYPE> matrix;
 ```
 
 ### Initialize FastLED
@@ -149,13 +151,48 @@ void setup() {
 }
 ```
 
+## Available Methods
+```c
+uint16_t mXY(uint16_t x, uint16_t y)
+void SetLEDArray(struct CRGB *pLED)
+
+struct CRGB *operator[](int n)
+struct CRGB &operator()(int16_t x, int16_t y)
+struct CRGB &operator()(int16_t i)
+
+int Size()
+int Width()
+int Height()
+
+void HorizontalMirror(bool FullHeight = true)
+void VerticalMirror()
+void QuadrantMirror()
+void QuadrantRotateMirror()
+void TriangleTopMirror(bool FullHeight = true)
+void TriangleBottomMirror(bool FullHeight = true)
+void QuadrantTopTriangleMirror()
+void QuadrantBottomTriangleMirror()
+
+void DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
+void DrawRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
+void DrawCircle(int16_t xc, int16_t yc, uint16_t r, CRGB color)
+void DrawFilledRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
+void DrawFilledCircle(int16_t xc, int16_t yc, uint16_t r, CRGB color)
+
+void drawPixel(int n, CRGB color)
+void drawPixel(int16_t x, int16_t y, CRGB color)
+struct CRGB & pixel(int n)
+struct CRGB & pixel(int16_t x, int16_t y)
+void fillScreen(CRGB color)
+void setRemapFunction(uint16_t (*fn)(uint16_t, uint16_t))
+```
+
 ## Graphic Library ([FastLED-GFX](https://github.com/Jorgen-VikingGod/FastLED-GFX))
 ----------------------------------------------------------------
 Simple FastLED port of ([Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library))
 
 ### Available Methods
 ```c
-void drawPixel(int16_t x, int16_t y, CRGB color)
 void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
 void drawFastVLine(int16_t x, int16_t y, int16_t h, CRGB color)
 void drawFastHLine(int16_t x, int16_t y, int16_t w, CRGB color)
