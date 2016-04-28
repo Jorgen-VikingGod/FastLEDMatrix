@@ -1,11 +1,11 @@
 # FastLEDMatrix
 ---------------------------
-Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafruit_NeoMatrix))
+FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafruit_NeoMatrix)) and simple merge with ([cLEDMatrix](https://github.com/AaronLiddiment/LEDMatrix) by [Aaron Liddiment](https://github.com/AaronLiddiment))
 
 <table>
   <tr>
     <td colspan="2">
-      The FastLEDMatrix library based on Adafruit-NeoMatrix to create two-dimensional graphic displays using FastLED. You can then easily draw shapes, text and animation without having to calculate every X/Y pixel position. Larger displays can be formed using sections of LED strip / matrices, as shown in the photo below.
+      The FastLEDMatrix library based on Adafruit-NeoMatrix and cLEDMatrix to create two-dimensional graphic displays using FastLED. You can then easily draw shapes, text and animation without having to calculate every X/Y pixel position. Larger displays can be formed using sections of LED strip / matrices, as shown in the photo below.
     </td>
   </tr>
   <tr style="vertical-align: top;">
