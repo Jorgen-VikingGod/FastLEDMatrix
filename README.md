@@ -12,16 +12,28 @@ Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafrui
     <td width="50%">
       <strong>Table of Contents</strong>
       <ul>
-        <li><a href="#spi-oled--rfid-rc522-link">SPI OLED + RFID RC522</a>
+      <li><a href="#single-matrix-link">Signle Matrix</a>
           <ul>
-            <li><a href="#hardware">Hardware</a></li>
-            <li><a href="#wiring-oled-display">Wiring OLED display</a></li>
-            <li><a href="#wiring-rfid-rc522-module">Wiring RFID RC522 module</a></li>
-            <li><a href="#initialize-oled-display">Initialize OLED display</a></li>
-            <li><a href="#initialize-rfid-module">Initialize RFID module</a></li>
-            <li><a href="#read-rfid-cards">Read RFID cards</a></li>
+            <li><a href="#parameters">Parameter</a></li>
+            <li><a href="#includes">Includes</a></li>
+            <li><a href="#decleration">Decleration</a></li>
+            <li><a href="#initialize-fastled">Initialize FastLED</a></li>
           </ul>
         </li>
+        <li><a href="#tile-matrix-link">Tile Matrix</a>
+          <ul>
+            <li><a href="#parameters-1">Parameter</a></li>
+            <li><a href="#includes-1">Includes</a></li>
+            <li><a href="#decleration-1">Decleration</a></li>
+            <li><a href="#initialize-fastled-1">Initialize FastLED</a></li>
+            <li><a href="#initialize-fastled-multiple-controller">Initialize FastLED (multiple controller)</a></li>
+          </ul>
+        </li>
+        <li><a href="#graphic-library-fastled-gfx">Graphic Library</a>
+          <ul>
+            <li><a href="#available-methods">Available Methods</a></li>
+          </ul>
+        </li>        
       </ul>
     </td>
     <td>
