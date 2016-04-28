@@ -66,15 +66,21 @@
 #define MTX_TILE_ZIGZAG        0x80 // Tile order reverses between lines
 #define MTX_TILE_SEQUENCE      0x80 // Bitmask for tile line order
 
-class FastLEDMatrix : public FastLED_GFX {
+class FastLEDMatrixBase: public FastLED_GFX {
+friend class cSprite;
+
+protected:
+  struct CRGB *m_LED;
+  struct CRGB m_OutOfBounds;
+  uint8_t type;
+  uint8_t matrixWidth;
+  uint8_t matrixHeight;
+  uint8_t tilesX;
+  uint8_t tilesY;
+  uint16_t (*remapFn)(uint16_t x, uint16_t y);
 
 public:
-
-  // Constructor for single matrix:
-  FastLEDMatrix(int w, int h, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG);
-
-  // Constructor for tiled matrices:
-  FastLEDMatrix(uint8_t matrixW, uint8_t matrixH, uint8_t tX, uint8_t tY, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG + MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS + MTX_TILE_ZIGZAG);
+  FastLEDMatrixBase(int w, int h);
 
   virtual uint16_t mXY(uint16_t x, uint16_t y);
   void SetLEDArray(struct CRGB *pLED);	// Only used with externally defined LED arrays
@@ -84,8 +90,23 @@ public:
   struct CRGB &operator()(int16_t i);
 
   int Size()   { return(_width * _height); }
-  //int Width()  { return(_width); }
-  //int Height() { return(_height); }
+  int Width()  { return(_width); }
+  int Height() { return(_height); }
+
+  void HorizontalMirror(bool FullHeight = true);
+  void VerticalMirror();
+  void QuadrantMirror();
+  void QuadrantRotateMirror();
+  void TriangleTopMirror(bool FullHeight = true);
+  void TriangleBottomMirror(bool FullHeight = true);
+  void QuadrantTopTriangleMirror();
+  void QuadrantBottomTriangleMirror();
+
+  void DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color);
+  void DrawRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color);
+  void DrawCircle(int16_t xc, int16_t yc, uint16_t r, CRGB Col);
+  void DrawFilledRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color);
+  void DrawFilledCircle(int16_t xc, int16_t yc, uint16_t r, CRGB color);
 
   void drawPixel(int n, CRGB color);
   void drawPixel(int16_t x, int16_t y, CRGB color);
@@ -95,17 +116,44 @@ public:
   void setPassThruColor(CRGB color);
   void setPassThruColor(void);
   void setRemapFunction(uint16_t (*fn)(uint16_t, uint16_t));
+};
 
+template<int w, int h, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG> class cFastLEDSingleMatrix : public FastLEDMatrixBase {
 private:
-  struct CRGB *m_LED;
-  struct CRGB m_OutOfBounds;
+  struct CRGB p_LED[(w * h)];
+public:
+  cFastLEDSingleMatrix()
+    : FastLEDMatrixBase(w, h) {
+    type = matrixType;
+    matrixWidth = w;
+    matrixHeight = h;
+    tilesX = 0;
+    tilesY = 0;
+    remapFn = NULL;
+    m_LED = p_LED;
+  }
+  void SetLEDArray(struct CRGB *pLED) {
+    m_LED = pLED;
+  }
+};
 
-  const uint8_t type;
-  const uint8_t matrixWidth;
-  const uint8_t matrixHeight;
-  const uint8_t tilesX;
-  const uint8_t tilesY;
-  uint16_t (*remapFn)(uint16_t x, uint16_t y);
+template<uint8_t matrixW, uint8_t matrixH, uint8_t tX, uint8_t tY, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG + MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS + MTX_TILE_ZIGZAG> class cFastLEDMatrix : public FastLEDMatrixBase {
+private:
+  struct CRGB p_LED[(matrixW*tX * matrixH*tY)];
+public:
+  cFastLEDMatrix()
+    : FastLEDMatrixBase(matrixW * tX, matrixH * tY) {
+      type = matrixType;
+      matrixWidth = matrixW;
+      matrixHeight = matrixH;
+      tilesX = tX;
+      tilesY = tY;
+      remapFn = NULL;
+      m_LED = p_LED;
+  }
+  void SetLEDArray(struct CRGB *pLED) {
+    m_LED = pLED;
+  }
 };
 
 #endif // _FASTLEDMATRIX_H_

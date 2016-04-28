@@ -53,45 +53,28 @@
 #define _swap_uint16_t(a, b) { uint16_t t = a; a = b; b = t; }
 #endif
 
-// Constructor for single matrix:
-FastLEDMatrix::FastLEDMatrix(int w, int h, uint8_t matrixType)
-  : FastLED_GFX(w, h), type(matrixType), matrixWidth(w), matrixHeight(h),
-    tilesX(0), tilesY(0), remapFn(NULL) {
-  struct CRGB p_LED[(matrixWidth * matrixHeight)];
-  m_LED = p_LED;
-}
+FastLEDMatrixBase::FastLEDMatrixBase(int w, int h)
+  : FastLED_GFX(w, h) { }
 
-// Constructor for tiled matrices:
-FastLEDMatrix::FastLEDMatrix(uint8_t mW, uint8_t mH, uint8_t tX, uint8_t tY, uint8_t matrixType)
-  : FastLED_GFX(mW * tX, mH * tY), type(matrixType), matrixWidth(mW), matrixHeight(mH),
-    tilesX(tX), tilesY(tY), remapFn(NULL) {
-  struct CRGB p_LED[(matrixWidth*tilesX * matrixHeight*tilesY)];
-  m_LED = p_LED;
-}
-
-struct CRGB* FastLEDMatrix::operator[](int n) {
+struct CRGB* FastLEDMatrixBase::operator[](int n) {
   return(&m_LED[n]);
 }
 
-struct CRGB& FastLEDMatrix::operator()(int16_t x, int16_t y) {
+struct CRGB& FastLEDMatrixBase::operator()(int16_t x, int16_t y) {
   if ( (x >= 0) && (x < _width) && (y >= 0) && (y < _height))
     return(m_LED[mXY(x, y)]);
   else
     return(m_OutOfBounds);
 }
 
-struct CRGB& FastLEDMatrix::operator()(int16_t i) {
+struct CRGB& FastLEDMatrixBase::operator()(int16_t i) {
   if ((i >=0) && (i < (_width * _height)))
     return(m_LED[i]);
   else
     return(m_OutOfBounds);
 }
 
-void FastLEDMatrix::SetLEDArray(struct CRGB *pLED) {
-  m_LED = pLED;
-}
-
-uint16_t FastLEDMatrix::mXY(uint16_t x, uint16_t y) {
+uint16_t FastLEDMatrixBase::mXY(uint16_t x, uint16_t y) {
   if((x < 0) || (y < 0) || (x >= _width) || (y >= _height)) return 0;
 
   int16_t t;
@@ -188,30 +171,131 @@ uint16_t FastLEDMatrix::mXY(uint16_t x, uint16_t y) {
   return (tileOffset + pixelOffset);
 }
 
-void FastLEDMatrix::drawPixel(int n, CRGB color) {
-  m_LED[n] = color;
+void FastLEDMatrixBase::HorizontalMirror(bool FullHeight) {
+  int ty, y, x, xx;
+  if (FullHeight)
+    ty = _height - 1;
+  else
+    ty = (_height / 2);
+  for (y=ty; y>=0; --y) {
+    for (x=(_width/2)-1,xx=((_width+1)/2); x>=0; --x,++xx)
+      m_LED[mXY(xx, y)] = m_LED[mXY(x, y)];
+  }
 }
 
-void FastLEDMatrix::drawPixel(int16_t x, int16_t y, CRGB color) {
-  m_LED[mXY(x,y)] = color;
+void FastLEDMatrixBase::VerticalMirror() {
+  int y, yy, x;
+  for (y=(_height/2)-1,yy=((_height+1)/2); y>=0; --y,++yy) {
+    for (x=_width-1; x>=0; --x)
+      m_LED[mXY(x, yy)] = m_LED[mXY(x, y)];
+  }
 }
 
-struct CRGB& FastLEDMatrix::pixel(int n) {
-  return m_LED[n];
+void FastLEDMatrixBase::QuadrantMirror() {
+  HorizontalMirror(false);
+  VerticalMirror();
 }
 
-struct CRGB& FastLEDMatrix::pixel(int16_t x, int16_t y) {
-  return m_LED[mXY(x,y)];
+void FastLEDMatrixBase::QuadrantRotateMirror() {
+  int MaxXY, MidXY, x, y, src;
+  if (_width > _height)
+    MaxXY = _height;
+  else
+    MaxXY = _width;
+  MidXY = (MaxXY / 2);
+  MaxXY--;
+  for (x=MidXY-(MaxXY%2); x>=0; --x) {
+    for (y=MidXY-(MaxXY%2); y>=0; --y) {
+      src = mXY(x, y);
+      m_LED[mXY(MidXY + y, MidXY - (MaxXY % 2) - x)] = m_LED[src];
+      m_LED[mXY(MaxXY - x, MaxXY - y)] = m_LED[src];
+      m_LED[mXY(MidXY - (MaxXY % 2) - y, MidXY + x)] = m_LED[src];
+    }
+  }
 }
 
-void FastLEDMatrix::fillScreen(CRGB color) {
+void FastLEDMatrixBase::TriangleTopMirror(bool FullHeight) {
+  int MaxXY, x, y;
+  if (_width > _height)
+    MaxXY = _height - 1;
+  else
+    MaxXY = _width - 1;
+  if (! FullHeight)
+    MaxXY /= 2;
+  for (y=1; y<=MaxXY; ++y) {
+    for (x=0; x<y; ++x)
+      m_LED[mXY(y,x)] = m_LED[mXY(x,y)];
+  }
+}
+
+void FastLEDMatrixBase::TriangleBottomMirror(bool FullHeight) {
+  int MaxXY, x, y, xx, yy;
+  if (_width > _height)
+    MaxXY = _height - 1;
+  else
+    MaxXY = _width - 1;
+  if (! FullHeight)
+    MaxXY /= 2;
+  for (y=0,xx=MaxXY; y<MaxXY; y++,xx--) {
+    for (x=MaxXY-y-1,yy=y+1; x>=0; --x,++yy)
+      m_LED[mXY(xx, yy)] = m_LED[mXY(x, y)];
+  }
+}
+
+void FastLEDMatrixBase::QuadrantTopTriangleMirror() {
+  TriangleTopMirror(false);
+  QuadrantMirror();
+}
+
+void FastLEDMatrixBase::QuadrantBottomTriangleMirror() {
+  TriangleBottomMirror(false);
+  QuadrantMirror();
+}
+
+void FastLEDMatrixBase::DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color) {
+  drawLine(x0, y0, x1, y1, color);
+}
+
+void FastLEDMatrixBase::DrawRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color) {
+  drawRect(x0, y0, (x1-x0), (y1-y0), color);
+}
+
+void FastLEDMatrixBase::DrawCircle(int16_t xc, int16_t yc, uint16_t r, CRGB color) {
+  drawCircle(xc, yc, r, color);
+}
+
+void FastLEDMatrixBase::DrawFilledRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color) {
+  fillRect(x0, y0, (x1-x0), (y1-y0), color);
+}
+
+void FastLEDMatrixBase::DrawFilledCircle(int16_t xc, int16_t yc, uint16_t r, CRGB color) {
+  fillCircle(xc, yc, r, color);
+}
+
+void FastLEDMatrixBase::drawPixel(int n, CRGB color) {
+  (*this)(n) = color;
+}
+
+void FastLEDMatrixBase::drawPixel(int16_t x, int16_t y, CRGB color) {
+  (*this)(x,y) = color;
+}
+
+struct CRGB& FastLEDMatrixBase::pixel(int n) {
+  return (*this)(n);
+}
+
+struct CRGB& FastLEDMatrixBase::pixel(int16_t x, int16_t y) {
+  return (*this)(x, y);
+}
+
+void FastLEDMatrixBase::fillScreen(CRGB color) {
   uint16_t i, n;
   uint32_t c;
 
   n = Size();
-  for(i=0; i<n; i++) m_LED[i] = c;
+  for(i=0; i<n; i++) (*this)(i) = c;
 }
 
-void FastLEDMatrix::setRemapFunction(uint16_t (*fn)(uint16_t, uint16_t)) {
+void FastLEDMatrixBase::setRemapFunction(uint16_t (*fn)(uint16_t, uint16_t)) {
   remapFn = fn;
 }
