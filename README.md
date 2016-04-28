@@ -12,7 +12,7 @@ Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafrui
     <td width="50%">
       <strong>Table of Contents</strong>
       <ul>
-      <li><a href="#single-matrix-link">Signle Matrix</a>
+      <li><a href="#single-matrix-example">Signle Matrix</a>
           <ul>
             <li><a href="#parameters">Parameter</a></li>
             <li><a href="#includes">Includes</a></li>
@@ -20,7 +20,7 @@ Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafrui
             <li><a href="#initialize-fastled">Initialize FastLED</a></li>
           </ul>
         </li>
-        <li><a href="#tile-matrix-link">Tile Matrix</a>
+        <li><a href="#tile-matrix-example">Tile Matrix</a>
           <ul>
             <li><a href="#parameters-1">Parameter</a></li>
             <li><a href="#includes-1">Includes</a></li>
@@ -42,7 +42,7 @@ Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafrui
   </tr>
 </table>
 
-## Single Matrix ([#link](examples/matrixtest/matrixtest.ino))
+## Single Matrix ([Example](examples/matrixtest/matrixtest.ino))
 ----------------------------------------------------------------
 ### Parameters
 | Parameter    | Description                                 | 
@@ -85,7 +85,7 @@ void setup() {
 ```
 
 
-## Tile Matrix ([#link](examples/tiletest/tiletest.ino))
+## Tile Matrix ([Example](examples/tiletest/tiletest.ino))
 ----------------------------------------------------------------
 ### Parameters
 | Parameter    | Description                                       | 
