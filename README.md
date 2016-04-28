@@ -1,2 +1,189 @@
 # FastLEDMatrix
-FastLED port of https://github.com/adafruit/Adafruit_NeoMatrix
+---------------------------
+Simple FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafruit_NeoMatrix))
+
+<table>
+  <tr>
+    <td colspan="2">
+      The FastLEDMatrix library based on Adafruit-NeoMatrix to create two-dimensional graphic displays using FastLED. You can then easily draw shapes, text and animation without having to calculate every X/Y pixel position. Larger displays can be formed using sections of LED strip / matrices, as shown in the photo below.
+    </td>
+  </tr>
+  <tr style="vertical-align: top;">
+    <td width="50%">
+      <strong>Table of Contents</strong>
+      <ul>
+        <li><a href="#spi-oled--rfid-rc522-link">SPI OLED + RFID RC522</a>
+          <ul>
+            <li><a href="#hardware">Hardware</a></li>
+            <li><a href="#wiring-oled-display">Wiring OLED display</a></li>
+            <li><a href="#wiring-rfid-rc522-module">Wiring RFID RC522 module</a></li>
+            <li><a href="#initialize-oled-display">Initialize OLED display</a></li>
+            <li><a href="#initialize-rfid-module">Initialize RFID module</a></li>
+            <li><a href="#read-rfid-cards">Read RFID cards</a></li>
+          </ul>
+        </li>
+      </ul>
+    </td>
+    <td>
+      <img src="https://cdn-learn.adafruit.com/assets/assets/000/010/704/medium640/leds_hairy.png?1377844757" alt="Espruino Pico OLED NFC" />
+    </td>
+  </tr>
+</table>
+
+## Single Matrix ([#link](examples/matrixtest/matrixtest.ino))
+----------------------------------------------------------------
+### Parameters
+| Parameter    | Description                                 | 
+| ------------ |---------------------------------------------|
+| Parameter 1  | width of matrix                             |
+| Parameter 2  | height of matrix                            |
+| Parameter 3  | matrix layout flags, add together as needed |
+
+### Includes
+```c
+#include <FastLED.h>
+#include <FastLED_GFX.h>
+#include <FastLEDMatrix.h>
+```
+
+### Decleration
+```c
+// declare FastLED (matrix / LED strip)
+#define LED_PIN        2
+#define COLOR_ORDER    GRB
+#define CHIPSET        WS2812B
+
+// declare matrix
+#define MATRIX_WIDTH   5 // width of matrix
+#define MATRIX_HEIGHT  8 // height of matrix
+#define MATRIX_TYPE    (MTX_MATRIX_TOP + MTX_MATRIX_RIGHT + MTX_MATRIX_COLUMNS + MTX_MATRIX_PROGRESSIVE) // matrix layout flags, add together as needed
+
+// create our matrix based on matrix definition
+FastLEDMatrix matrix = FastLEDMatrix(MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE);
+```
+
+### Initial FastLED
+```c
+void setup() {
+  // initial FastLED by using CRGB led source from our matrix class
+  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(matrix[0], matrix.Size());
+  FastLED.setBrightness(127);
+  FastLED.clear(true);
+}
+```
+
+
+## Tile Matrix ([#link](examples/tiletest/tiletest.ino))
+----------------------------------------------------------------
+### Parameters
+| Parameter    | Description                                       | 
+| ------------ |---------------------------------------------------|
+| Parameter 1  | width of EACH NEOPIXEL MATRIX (not total display) |
+| Parameter 2  | height of each matrix                             |
+| Parameter 3  | number of matrices arranged horizontally          |
+| Parameter 4  | number of matrices arranged vertically            |
+| Parameter 5  | matrix layout flags, add together as needed       |
+
+### Includes
+```c
+#include <FastLED.h>
+#include <FastLED_GFX.h>
+#include <FastLEDMatrix.h>
+```
+
+### Decleration
+```c
+// declare FastLED (matrix / LED strip)
+#define LED_PIN        2
+#define COLOR_ORDER    GRB
+#define CHIPSET        WS2812B
+
+// declare matrix
+#define MATRIX_WIDTH        16 // width of EACH NEOPIXEL MATRIX (not total display)
+#define MATRIX_HEIGHT       16 // height of each matrix
+#define MATRIX_TILE_H       4  // number of matrices arranged horizontally
+#define MATRIX_TILE_V       1  // number of matrices arranged vertically
+#define MATRIX_TYPE        (MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG + MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS) // matrix layout flags, add together as needed
+#define MATRIX_SIZE        (MATRIX_WIDTH*MATRIX_HEIGHT)
+
+// create our matrix based on matrix definition
+FastLEDMatrix matrix = FastLEDMatrix(MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TILE_H, MATRIX_TILE_V, MATRIX_TYPE);
+```
+
+### Initial FastLED
+```c
+void setup() {
+  // initial FastLED by using CRGB led source from our matrix class
+  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(matrix[0], matrix.Size());
+  FastLED.setBrightness(127);
+  FastLED.clear(true);
+}
+```
+
+### Initial FastLED (multiple controller)
+```c
+void setup() {
+  // initial FastLED with multiple controller, by using CRGB led source from each matrix panal
+  // panel 1 (from   0 to  255)
+  FastLED.addLeds<WS2812B, PANEL_1_DATA_PIN, GRB>(matrix[0], 0, MATRIX_SIZE);
+  // panel 2 (from 255 to  511)
+  FastLED.addLeds<APA102, PANEL_2_DATA_PIN, PANEL_2_CLOCK_PIN, RGB>(matrix[0], 1*MATRIX_SIZE, MATRIX_SIZE);
+  // panel 3 (from 512 to  767)
+  FastLED.addLeds<SK9822, PANEL_3_DATA_PIN, PANEL_3_CLOCK_PIN, BGR>(matrix[0], 2*MATRIX_SIZE, MATRIX_SIZE);
+  // panel 4 (from 768 to 1023)
+  FastLED.addLeds<WS2812B, PANEL_4_DATA_PIN, GRB>(matrix[0], 3*MATRIX_SIZE, MATRIX_SIZE);
+  FastLED.setBrightness(127);
+  FastLED.clear(true);
+}
+```
+
+## Graphic Library ([FastLED-GFX](https://github.com/Jorgen-VikingGod/FastLED-GFX))
+----------------------------------------------------------------
+Simple FastLED port of ([Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library))
+
+### Available Methods
+```c
+void drawPixel(int16_t x, int16_t y, CRGB color)
+void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color)
+void drawFastVLine(int16_t x, int16_t y, int16_t h, CRGB color)
+void drawFastHLine(int16_t x, int16_t y, int16_t w, CRGB color)
+void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color)
+void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, CRGB color)
+void fillScreen(CRGB color)
+void invertDisplay(boolean i)
+
+void drawCircle(int16_t x0, int16_t y0, int16_t r, CRGB color)
+void drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, CRGB color)
+void fillCircle(int16_t x0, int16_t y0, int16_t r, CRGB color)
+void fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, int16_t delta, CRGB color)
+void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, CRGB color)
+void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, CRGB color)
+void drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, CRGB color)
+void fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, CRGB color)
+void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, CRGB color)
+void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, CRGB color, CRGB bg)
+void drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, CRGB color)
+void drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h, CRGB color, CRGB bg)
+void drawXBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, CRGB color)
+void drawChar(int16_t x, int16_t y, unsigned char c, CRGB color, CRGB bg, uint8_t size)
+void setCursor(int16_t x, int16_t y)
+void setTextColor(CRGB c)
+void setTextColor(CRGB c, CRGB bg)
+void setTextSize(uint8_t s)
+void setTextWrap(boolean w)
+void setRotation(uint8_t r)
+void cp437(boolean x=true)
+void setFont(const GFXfont *f = NULL)
+void getTextBounds(char *string, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h)
+void getTextBounds(const __FlashStringHelper *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h)
+
+size_t write(uint8_t)
+
+int16_t height(void) const
+int16_t width(void) const
+
+uint8_t getRotation(void) const
+
+int16_t getCursorX(void) const
+int16_t getCursorY(void) const
+```
