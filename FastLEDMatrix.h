@@ -104,7 +104,7 @@ public:
 
   void DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color);
   void DrawRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color);
-  void DrawCircle(int16_t xc, int16_t yc, uint16_t r, CRGB Col);
+  void DrawCircle(int16_t xc, int16_t yc, uint16_t r, CRGB color);
   void DrawFilledRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, CRGB color);
   void DrawFilledCircle(int16_t xc, int16_t yc, uint16_t r, CRGB color);
 
@@ -113,8 +113,6 @@ public:
   struct CRGB & pixel(int n);
   struct CRGB & pixel(int16_t x, int16_t y);
   void fillScreen(CRGB color);
-  void setPassThruColor(CRGB color);
-  void setPassThruColor(void);
   void setRemapFunction(uint16_t (*fn)(uint16_t, uint16_t));
 };
 
