@@ -82,7 +82,7 @@ void setup() {
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(matrix[0], matrix.Size());
   FastLED.setBrightness(128);
   FastLED.clear(true);
-
+  // initial helpers for plasma animation
   LoopDelayMS = TARGET_FRAME_TIME;
   LastLoop = millis() - LoopDelayMS;
   PlasmaShift = (random8(0, 5) * 32) + 64;
@@ -90,11 +90,9 @@ void setup() {
 }
 
 void loop() {
-  if (abs(millis() - LastLoop) >= LoopDelayMS)
-  {
+  if (abs(millis() - LastLoop) >= LoopDelayMS) {
     LastLoop = millis();
     FastLED.clear();
-
     // Fill background with dim plasma
     for (int16_t x=0; x<matrix.width(); x++) {
       for (int16_t y=0; y<matrix.height(); y++) {
@@ -108,7 +106,6 @@ void loop() {
     PlasmaTime += PlasmaShift;
     if (OldPlasmaTime > PlasmaTime)
       PlasmaShift = (random8(0, 5) * 32) + 64;
-
-	FastLED.show();
+    FastLED.show();
   }
 }
