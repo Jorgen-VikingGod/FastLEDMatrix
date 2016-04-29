@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>FastLEDMatrix by Jorgen-VikingGod</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">FastLEDMatrix</h1>
+      <h2 class="project-tagline">FastLED port of https://github.com/adafruit/Adafruit_NeoMatrix</h2>
+      <a href="https://github.com/Jorgen-VikingGod/FastLEDMatrix" class="btn">View on GitHub</a>
+      <a href="https://github.com/Jorgen-VikingGod/FastLEDMatrix/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Jorgen-VikingGod/FastLEDMatrix/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="fastledmatrix" class="anchor" href="#fastledmatrix" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>FastLEDMatrix</h1>
+
+<hr>
+
+<p>FastLED port of (<a href="https://github.com/adafruit/Adafruit_NeoMatrix">Adafruit-NeoMatrix</a>) and simple merge with (<a href="https://github.com/AaronLiddiment/LEDMatrix">cLEDMatrix</a> by <a href="https://github.com/AaronLiddiment">Aaron Liddiment</a>)</p>
+
+<table>
+  <tr>
+    <td colspan="2">
+      The FastLEDMatrix library based on Adafruit-NeoMatrix and cLEDMatrix to create two-dimensional graphic displays using FastLED. You can then easily draw shapes, text and animation without having to calculate every X/Y pixel position. Larger displays can be formed using sections of LED strip / matrices, as shown in the photo below.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <strong>Table of Contents</strong>
+      <ul>
+      <li>
+<a href="#single-matrix-example">Signle Matrix</a>
+          <ul>
+            <li><a href="#parameters">Parameter</a></li>
+            <li><a href="#includes">Includes</a></li>
+            <li><a href="#decleration">Decleration</a></li>
+            <li><a href="#initialize-fastled">Initialize FastLED</a></li>
+          </ul>
+        </li>
+        <li>
+<a href="#tile-matrix-example">Tile Matrix</a>
+          <ul>
+            <li><a href="#parameters-1">Parameter</a></li>
+            <li><a href="#includes-1">Includes</a></li>
+            <li><a href="#decleration-1">Decleration</a></li>
+            <li><a href="#initialize-fastled-1">Initialize FastLED</a></li>
+            <li><a href="#initialize-fastled-multiple-controller">Initialize FastLED (multiple controller)</a></li>
+          </ul>
+        </li>
+        <li><a href="#available-methods">Available Methods</a></li>
+                
+        <li>
+<a href="#graphic-library-fastled-gfx">Graphic Library</a>
+          <ul>
+            <li><a href="#available-methods-1">Available Methods</a></li>
+          </ul>
+        </li>        
+      </ul>
+    </td>
+    <td>
+      <img src="https://cdn-learn.adafruit.com/assets/assets/000/010/704/medium640/leds_hairy.png?1377844757" alt="Espruino Pico OLED NFC">
+    </td>
+  </tr>
+</table>
+
+<h2>
+<a id="single-matrix-example" class="anchor" href="#single-matrix-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Single Matrix (<a href="examples/matrixtest/matrixtest.ino">Example</a>)</h2>
+
+<hr>
+
+<h3>
+<a id="parameters" class="anchor" href="#parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters</h3>
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Parameter 1</td>
+<td>width of matrix</td>
+</tr>
+<tr>
+<td>Parameter 2</td>
+<td>height of matrix</td>
+</tr>
+<tr>
+<td>Parameter 3</td>
+<td>matrix layout flags, add together as needed</td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="includes" class="anchor" href="#includes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Includes</h3>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>FastLED.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>FastLED_GFX.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>FastLEDMatrix.h<span class="pl-pds">&gt;</span></span></pre></div>
+
+<h3>
+<a id="decleration" class="anchor" href="#decleration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Decleration</h3>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-c">// declare FastLED (matrix / LED strip)</span>
+#<span class="pl-k">define</span> <span class="pl-en">LED_PIN</span>        <span class="pl-c1">2</span>
+#<span class="pl-k">define</span> <span class="pl-en">COLOR_ORDER</span>    GRB
+#<span class="pl-k">define</span> <span class="pl-en">CHIPSET</span>        WS2812B
+
+<span class="pl-c">// declare matrix</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_WIDTH</span>   <span class="pl-c1">5</span> <span class="pl-c">// width of matrix</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_HEIGHT</span>  <span class="pl-c1">8</span> <span class="pl-c">// height of matrix</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_TYPE</span>    (MTX_MATRIX_TOP + MTX_MATRIX_RIGHT + MTX_MATRIX_COLUMNS + MTX_MATRIX_PROGRESSIVE) <span class="pl-c">// matrix layout flags, add together as needed</span>
+
+<span class="pl-c">// create our matrix based on matrix definition</span>
+cFastLEDSingleMatrix&lt;MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE&gt; matrix;</pre></div>
+
+<h3>
+<a id="initialize-fastled" class="anchor" href="#initialize-fastled" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Initialize FastLED</h3>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">void</span> <span class="pl-en">setup</span>() {
+  <span class="pl-c">// initial FastLED by using CRGB led source from our matrix class</span>
+  FastLED.<span class="pl-smi">addLeds</span>&lt;CHIPSET, LED_PIN, COLOR_ORDER&gt;(matrix[<span class="pl-c1">0</span>], matrix.<span class="pl-c1">Size</span>());
+  FastLED.<span class="pl-c1">setBrightness</span>(<span class="pl-c1">127</span>);
+  FastLED.<span class="pl-c1">clear</span>(<span class="pl-c1">true</span>);
+}</pre></div>
+
+<h2>
+<a id="tile-matrix-example" class="anchor" href="#tile-matrix-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tile Matrix (<a href="examples/tiletest/tiletest.ino">Example</a>)</h2>
+
+<hr>
+
+<h3>
+<a id="parameters-1" class="anchor" href="#parameters-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters</h3>
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Parameter 1</td>
+<td>width of EACH NEOPIXEL MATRIX (not total display)</td>
+</tr>
+<tr>
+<td>Parameter 2</td>
+<td>height of each matrix</td>
+</tr>
+<tr>
+<td>Parameter 3</td>
+<td>number of matrices arranged horizontally</td>
+</tr>
+<tr>
+<td>Parameter 4</td>
+<td>number of matrices arranged vertically</td>
+</tr>
+<tr>
+<td>Parameter 5</td>
+<td>matrix layout flags, add together as needed</td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="includes-1" class="anchor" href="#includes-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Includes</h3>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>FastLED.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>FastLED_GFX.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>FastLEDMatrix.h<span class="pl-pds">&gt;</span></span></pre></div>
+
+<h3>
+<a id="decleration-1" class="anchor" href="#decleration-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Decleration</h3>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-c">// declare FastLED (matrix / LED strip)</span>
+#<span class="pl-k">define</span> <span class="pl-en">LED_PIN</span>        <span class="pl-c1">2</span>
+#<span class="pl-k">define</span> <span class="pl-en">COLOR_ORDER</span>    GRB
+#<span class="pl-k">define</span> <span class="pl-en">CHIPSET</span>        WS2812B
+
+<span class="pl-c">// declare matrix</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_WIDTH</span>        <span class="pl-c1">16</span> <span class="pl-c">// width of EACH NEOPIXEL MATRIX (not total display)</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_HEIGHT</span>       <span class="pl-c1">16</span> <span class="pl-c">// height of each matrix</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_TILE_H</span>       <span class="pl-c1">4</span>  <span class="pl-c">// number of matrices arranged horizontally</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_TILE_V</span>       <span class="pl-c1">1</span>  <span class="pl-c">// number of matrices arranged vertically</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_TYPE</span>        (MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG + MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS) <span class="pl-c">// matrix layout flags, add together as needed</span>
+#<span class="pl-k">define</span> <span class="pl-en">MATRIX_SIZE</span>        (MATRIX_WIDTH*MATRIX_HEIGHT)
+
+<span class="pl-c">// create our matrix based on matrix definition</span>
+cFastLEDMatrix&lt;MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TILE_H, MATRIX_TILE_V, MATRIX_TYPE&gt; matrix;</pre></div>
+
+<h3>
+<a id="initialize-fastled-1" class="anchor" href="#initialize-fastled-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Initialize FastLED</h3>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">void</span> <span class="pl-en">setup</span>() {
+  <span class="pl-c">// initial FastLED by using CRGB led source from our matrix class</span>
+  FastLED.<span class="pl-smi">addLeds</span>&lt;CHIPSET, LED_PIN, COLOR_ORDER&gt;(matrix[<span class="pl-c1">0</span>], matrix.<span class="pl-c1">Size</span>());
+  FastLED.<span class="pl-c1">setBrightness</span>(<span class="pl-c1">127</span>);
+  FastLED.<span class="pl-c1">clear</span>(<span class="pl-c1">true</span>);
+}</pre></div>
+
+<h3>
+<a id="initialize-fastled-multiple-controller" class="anchor" href="#initialize-fastled-multiple-controller" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Initialize FastLED (multiple controller)</h3>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">void</span> <span class="pl-en">setup</span>() {
+  <span class="pl-c">// initial FastLED with multiple controller, by using CRGB led source from each matrix panal</span>
+  <span class="pl-c">// panel 1 (from   0 to  255)</span>
+  FastLED.<span class="pl-smi">addLeds</span>&lt;WS2812B, PANEL_1_DATA_PIN, GRB&gt;(matrix[<span class="pl-c1">0</span>], <span class="pl-c1">0</span>, MATRIX_SIZE);
+  <span class="pl-c">// panel 2 (from 255 to  511)</span>
+  FastLED.<span class="pl-smi">addLeds</span>&lt;APA102, PANEL_2_DATA_PIN, PANEL_2_CLOCK_PIN, RGB&gt;(matrix[<span class="pl-c1">0</span>], <span class="pl-c1">1</span>*MATRIX_SIZE, MATRIX_SIZE);
+  <span class="pl-c">// panel 3 (from 512 to  767)</span>
+  FastLED.<span class="pl-smi">addLeds</span>&lt;SK9822, PANEL_3_DATA_PIN, PANEL_3_CLOCK_PIN, BGR&gt;(matrix[<span class="pl-c1">0</span>], <span class="pl-c1">2</span>*MATRIX_SIZE, MATRIX_SIZE);
+  <span class="pl-c">// panel 4 (from 768 to 1023)</span>
+  FastLED.<span class="pl-smi">addLeds</span>&lt;WS2812B, PANEL_4_DATA_PIN, GRB&gt;(matrix[<span class="pl-c1">0</span>], <span class="pl-c1">3</span>*MATRIX_SIZE, MATRIX_SIZE);
+  FastLED.<span class="pl-c1">setBrightness</span>(<span class="pl-c1">127</span>);
+  FastLED.<span class="pl-c1">clear</span>(<span class="pl-c1">true</span>);
+}</pre></div>
+
+<h2>
+<a id="available-methods" class="anchor" href="#available-methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Available Methods</h2>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-c1">uint16_t</span> <span class="pl-en">mXY</span>(<span class="pl-c1">uint16_t</span> x, <span class="pl-c1">uint16_t</span> y)
+void SetLEDArray(<span class="pl-k">struct</span> CRGB *pLED)
+
+struct CRGB *operator[](<span class="pl-k">int</span> n)
+struct CRGB &amp;operator()(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y)
+struct CRGB &amp;operator()(<span class="pl-c1">int16_t</span> i)
+
+int Size()
+int Width()
+int Height()
+
+void HorizontalMirror(<span class="pl-k">bool</span> FullHeight = <span class="pl-c1">true</span>)
+void VerticalMirror()
+void QuadrantMirror()
+void QuadrantRotateMirror()
+void TriangleTopMirror(<span class="pl-k">bool</span> FullHeight = <span class="pl-c1">true</span>)
+void TriangleBottomMirror(<span class="pl-k">bool</span> FullHeight = <span class="pl-c1">true</span>)
+void QuadrantTopTriangleMirror()
+void QuadrantBottomTriangleMirror()
+
+void DrawLine(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> x1, <span class="pl-c1">int16_t</span> y1, CRGB color)
+void DrawRectangle(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> x1, <span class="pl-c1">int16_t</span> y1, CRGB color)
+void DrawCircle(<span class="pl-c1">int16_t</span> xc, <span class="pl-c1">int16_t</span> yc, <span class="pl-c1">uint16_t</span> r, CRGB color)
+void DrawFilledRectangle(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> x1, <span class="pl-c1">int16_t</span> y1, CRGB color)
+void DrawFilledCircle(<span class="pl-c1">int16_t</span> xc, <span class="pl-c1">int16_t</span> yc, <span class="pl-c1">uint16_t</span> r, CRGB color)
+
+void drawPixel(<span class="pl-k">int</span> n, CRGB color)
+void drawPixel(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, CRGB color)
+struct CRGB &amp; pixel(<span class="pl-k">int</span> n)
+struct CRGB &amp; pixel(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y)
+void fillScreen(CRGB color)
+void setRemapFunction(<span class="pl-c1">uint16_t</span> (*fn)(<span class="pl-c1">uint16_t</span>, <span class="pl-c1">uint16_t</span>))</pre></div>
+
+<h2>
+<a id="graphic-library-fastled-gfx" class="anchor" href="#graphic-library-fastled-gfx" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Graphic Library (<a href="https://github.com/Jorgen-VikingGod/FastLED-GFX">FastLED-GFX</a>)</h2>
+
+<hr>
+
+<p>Simple FastLED port of (<a href="https://github.com/adafruit/Adafruit-GFX-Library">Adafruit-GFX-Library</a>)</p>
+
+<h3>
+<a id="available-methods-1" class="anchor" href="#available-methods-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Available Methods</h3>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">void</span> <span class="pl-en">drawLine</span>(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> x1, <span class="pl-c1">int16_t</span> y1, CRGB color)
+void drawFastVLine(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-c1">int16_t</span> h, CRGB color)
+void drawFastHLine(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-c1">int16_t</span> w, CRGB color)
+void drawRect(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, CRGB color)
+void fillRect(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, CRGB color)
+void fillScreen(CRGB color)
+void invertDisplay(boolean i)
+
+void drawCircle(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> r, CRGB color)
+void drawCircleHelper(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> r, <span class="pl-c1">uint8_t</span> cornername, CRGB color)
+void fillCircle(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> r, CRGB color)
+void fillCircleHelper(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> r, <span class="pl-c1">uint8_t</span> cornername, <span class="pl-c1">int16_t</span> delta, CRGB color)
+void drawTriangle(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> x1, <span class="pl-c1">int16_t</span> y1, <span class="pl-c1">int16_t</span> x2, <span class="pl-c1">int16_t</span> y2, CRGB color)
+void fillTriangle(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> x1, <span class="pl-c1">int16_t</span> y1, <span class="pl-c1">int16_t</span> x2, <span class="pl-c1">int16_t</span> y2, CRGB color)
+void drawRoundRect(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, <span class="pl-c1">int16_t</span> radius, CRGB color)
+void fillRoundRect(<span class="pl-c1">int16_t</span> x0, <span class="pl-c1">int16_t</span> y0, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, <span class="pl-c1">int16_t</span> radius, CRGB color)
+void drawBitmap(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-k">const</span> <span class="pl-c1">uint8_t</span> *bitmap, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, CRGB color)
+void drawBitmap(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-k">const</span> <span class="pl-c1">uint8_t</span> *bitmap, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, CRGB color, CRGB bg)
+void drawBitmap(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-c1">uint8_t</span> *bitmap, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, CRGB color)
+void drawBitmap(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-c1">uint8_t</span> *bitmap, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, CRGB color, CRGB bg)
+void drawXBitmap(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-k">const</span> <span class="pl-c1">uint8_t</span> *bitmap, <span class="pl-c1">int16_t</span> w, <span class="pl-c1">int16_t</span> h, CRGB color)
+void drawChar(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-k">unsigned</span> <span class="pl-k">char</span> c, CRGB color, CRGB bg, <span class="pl-c1">uint8_t</span> size)
+void setCursor(<span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y)
+void setTextColor(CRGB c)
+void setTextColor(CRGB c, CRGB bg)
+void setTextSize(<span class="pl-c1">uint8_t</span> s)
+void setTextWrap(boolean w)
+void setRotation(<span class="pl-c1">uint8_t</span> r)
+void cp437(boolean x=<span class="pl-c1">true</span>)
+void setFont(<span class="pl-k">const</span> GFXfont *f = <span class="pl-c1">NULL</span>)
+void getTextBounds(<span class="pl-k">char</span> *string, <span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-c1">int16_t</span> *x1, <span class="pl-c1">int16_t</span> *y1, <span class="pl-c1">uint16_t</span> *w, <span class="pl-c1">uint16_t</span> *h)
+void getTextBounds(<span class="pl-k">const</span> __FlashStringHelper *s, <span class="pl-c1">int16_t</span> x, <span class="pl-c1">int16_t</span> y, <span class="pl-c1">int16_t</span> *x1, <span class="pl-c1">int16_t</span> *y1, <span class="pl-c1">uint16_t</span> *w, <span class="pl-c1">uint16_t</span> *h)
+
+size_t write(<span class="pl-c1">uint8_t</span>)
+
+int16_t height(<span class="pl-k">void</span>) <span class="pl-k">const</span>
+int16_t width(<span class="pl-k">void</span>) <span class="pl-k">const</span>
+
+uint8_t getRotation(<span class="pl-k">void</span>) <span class="pl-k">const</span>
+
+int16_t getCursorX(<span class="pl-k">void</span>) <span class="pl-k">const</span>
+int16_t getCursorY(<span class="pl-k">void</span>) <span class="pl-k">const</span></pre></div>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Jorgen-VikingGod/FastLEDMatrix">FastLEDMatrix</a> is maintained by <a href="https://github.com/Jorgen-VikingGod">Jorgen-VikingGod</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
