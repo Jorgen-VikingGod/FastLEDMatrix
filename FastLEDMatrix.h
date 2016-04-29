@@ -1,5 +1,6 @@
 /*--------------------------------------------------------------------
   Source code is based on https://github.com/adafruit/Adafruit_NeoMatrix
+  and on https://github.com/AaronLiddiment/LEDMatrix
   replace internal use of NeoPixel library with CRGB array to use with FastLED
 
   modified:  Juergen Skrotzky (JorgenVikingGod@gmail.com)
@@ -66,7 +67,7 @@
 #define MTX_TILE_ZIGZAG        0x80 // Tile order reverses between lines
 #define MTX_TILE_SEQUENCE      0x80 // Bitmask for tile line order
 
-class FastLEDMatrixBase: public FastLED_GFX {
+class cLEDMatrixBase: public FastLED_GFX {
 friend class cSprite;
 
 protected:
@@ -80,7 +81,7 @@ protected:
   uint16_t (*remapFn)(uint16_t x, uint16_t y);
 
 public:
-  FastLEDMatrixBase(int w, int h);
+  cLEDMatrixBase(int w, int h);
 
   virtual uint16_t mXY(uint16_t x, uint16_t y);
   void SetLEDArray(struct CRGB *pLED);	// Only used with externally defined LED arrays
@@ -116,12 +117,12 @@ public:
   void setRemapFunction(uint16_t (*fn)(uint16_t, uint16_t));
 };
 
-template<int w, int h, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG> class cFastLEDSingleMatrix : public FastLEDMatrixBase {
+template<int w, int h, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG> class cFastLEDSingleMatrix : public cLEDMatrixBase {
 private:
   struct CRGB p_LED[(w * h)];
 public:
   cFastLEDSingleMatrix()
-    : FastLEDMatrixBase(w, h) {
+    : cLEDMatrixBase(w, h) {
     type = matrixType;
     matrixWidth = w;
     matrixHeight = h;
@@ -135,12 +136,12 @@ public:
   }
 };
 
-template<uint8_t matrixW, uint8_t matrixH, uint8_t tX, uint8_t tY, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG + MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS + MTX_TILE_ZIGZAG> class cFastLEDMatrix : public FastLEDMatrixBase {
+template<uint8_t matrixW, uint8_t matrixH, uint8_t tX, uint8_t tY, uint8_t matrixType = MTX_MATRIX_TOP + MTX_MATRIX_LEFT + MTX_MATRIX_ROWS + MTX_MATRIX_ZIGZAG + MTX_TILE_TOP + MTX_TILE_LEFT + MTX_TILE_ROWS + MTX_TILE_ZIGZAG> class cFastLEDMatrix : public cLEDMatrixBase {
 private:
   struct CRGB p_LED[(matrixW*tX * matrixH*tY)];
 public:
   cFastLEDMatrix()
-    : FastLEDMatrixBase(matrixW * tX, matrixH * tY) {
+    : cLEDMatrixBase(matrixW * tX, matrixH * tY) {
       type = matrixType;
       matrixWidth = matrixW;
       matrixHeight = matrixH;
