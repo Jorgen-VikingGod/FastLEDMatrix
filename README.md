@@ -1,3 +1,10 @@
+# OBSOLETE
+------------
+## Use [cLEDMatrix](https://github.com/Jorgen-VikingGod/LEDMatrix) instead
+
+**************
+**************
+
 # FastLEDMatrix
 ---------------------------
 FastLED port of ([Adafruit-NeoMatrix](https://github.com/adafruit/Adafruit_NeoMatrix)) and simple merge with ([cLEDMatrix](https://github.com/AaronLiddiment/LEDMatrix) by [Aaron Liddiment](https://github.com/AaronLiddiment))
